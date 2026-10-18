@@ -6,7 +6,7 @@ Proyecto desarrollado para el **ASIC Miranda**, con servidor backend en Node.js,
 
 ## Integrantes
 
-Maria Rodriguez
+- Maria Rodriguez
 
 ## 🚀 Novedades: Integración con MySQL (`mysql-tab`)
 
