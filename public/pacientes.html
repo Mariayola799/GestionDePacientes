@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestión y administración de pacientes del ASIC Miranda. Directorio clínico, registro, modificación y consulta de expedientes.">
+    <title>Gestión de Pacientes | ASIC Miranda</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="navbar" id="main-navbar">
+        <a href="/" class="nav-brand" id="brand-link">
+            <div class="brand-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    <path d="M12 9v6M9 12h6"/>
+                </svg>
+            </div>
+            <div class="brand-title">
+                <span class="main-name">ASIC MIRANDA</span>
+                <span class="sub-name">Control de Pacientes</span>
+            </div>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link" id="nav-inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Inicio</a></li>
+            <li><a href="/pacientes" class="nav-link active" id="nav-pacientes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Gestión de Pacientes</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <button class="btn-theme-toggle" id="btn-theme-toggle" aria-label="Cambiar tema claro/oscuro">
+                <!-- Icon injected by app.js -->
+            </button>
+            <button class="btn btn-primary" id="btn-abrir-registro" onclick="abrirModalRegistro()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Registrar Paciente</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="pacientes-main">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="page-title-group">
+                <h1>Directorio de Pacientes</h1>
+                <p>Administra los ingresos clínicos, busca expedientes, edita información y consulta el historial completo.</p>
+            </div>
+        </section>
+
+        <!-- Panel principal con Toolbar y Contenido -->
+        <section class="panel" id="patients-panel">
+            <!-- Toolbar -->
+            <div class="toolbar" id="patients-toolbar">
+                <div class="search-box">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="input-search-pacientes" placeholder="Buscar por cédula, nombre, síntomas o dirección..." oninput="filtrarPacientes()">
+                </div>
+
+                <div class="toolbar-controls">
+                    <!-- Selector de Ordenamiento -->
+                    <select class="select-control" id="select-ordenar" onchange="ordenarPacientes()">
+                        <option value="fecha-desc">Fecha: Más recientes primero</option>
+                        <option value="fecha-asc">Fecha: Más antiguos primero</option>
+                        <option value="nombre-asc">Nombre: A &rarr; Z</option>
+                        <option value="nombre-desc">Nombre: Z &rarr; A</option>
+                        <option value="ci-asc">Cédula: Ascendente</option>
+                    </select>
+
+                    <!-- Selector de Vista (Tabla vs Cuadrícula) -->
+                    <div class="view-toggle" id="view-toggle-group">
+                        <button class="view-toggle-btn active" id="btn-view-table" onclick="cambiarVista('table')" title="Vista en Tabla">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        </button>
+                        <button class="view-toggle-btn" id="btn-view-cards" onclick="cambiarVista('cards')" title="Vista en Tarjetas">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Contador de resultados -->
+                    <span class="status-badge" id="badge-contador" style="background: var(--bg-surface); color: var(--text-secondary); border-color: var(--border-subtle);">
+                        Cargando...
+                    </span>
+                </div>
+            </div>
+
+            <!-- Vista 1: Tabla -->
+            <div class="table-responsive" id="container-table-view">
+                <table class="data-table" id="tabla-pacientes">
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Paciente</th>
+                            <th>Síntomas Clínicos</th>
+                            <th>Dirección</th>
+                            <th>Fecha de Ingreso</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-pacientes">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 3rem;">Cargando lista de pacientes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vista 2: Cuadrícula de Tarjetas (Oculta por defecto) -->
+            <div class="cards-grid" id="container-cards-view" style="display: none;">
+                <!-- Patient cards rendered by JavaScript -->
+            </div>
+
+            <!-- Estado Vacío -->
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-state-icon">📋</div>
+                <h3>No se encontraron pacientes</h3>
+                <p id="empty-state-msg">No hay registros coincidentes con los criterios de búsqueda actuales.</p>
+                <button class="btn btn-primary" onclick="abrirModalRegistro()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Registrar Nuevo Paciente
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: REGISTRAR NUEVO PACIENTE -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-registro">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                    <span>Registro de Paciente</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-registro')">&times;</button>
+            </div>
+            <form id="form-registro" onsubmit="guardarNuevoPaciente(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="reg-ci">Cédula de Identidad *</label>
+                            <input type="text" id="reg-ci" name="ci" placeholder="Ej: V-28491823" required>
+                            <span class="form-hint">Identificador único del paciente.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-nombre">Nombre *</label>
+                            <input type="text" id="reg-nombre" name="nombre" placeholder="Ej: Carlos" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-apellido">Apellido *</label>
+                            <input type="text" id="reg-apellido" name="apellido" placeholder="Ej: Mendoza" required>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="reg-direccion">Ciudad y Dirección</label>
+                            <input type="text" id="reg-direccion" name="direccion" placeholder="Ej: Av. Bolívar, Res. Los Samanes, Apto 4B">
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="reg-sintomas">Síntomas / Motivo de Ingreso</label>
+                            <textarea id="reg-sintomas" name="sintomas" placeholder="Detalle los síntomas del paciente (ej: Fiebre, dolor de cabeza, tos)..."></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="reg-fecha">Fecha de Ingreso</label>
+                            <input type="date" id="reg-fecha" name="fecha">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-registro')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-registro">Guardar Paciente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: EDITAR PACIENTE -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-edicion">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Modificar Datos del Paciente</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-edicion')">&times;</button>
+            </div>
+            <form id="form-edicion" onsubmit="actualizarPaciente(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="edit-ci">Cédula de Identidad (No modificable)</label>
+                            <input type="text" id="edit-ci" name="ci" readonly style="opacity: 0.7; cursor: not-allowed; background: var(--bg-surface);">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit-nombre">Nombre *</label>
+                            <input type="text" id="edit-nombre" name="nombre" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit-apellido">Apellido *</label>
+                            <input type="text" id="edit-apellido" name="apellido" required>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="edit-direccion">Ciudad y Dirección</label>
+                            <input type="text" id="edit-direccion" name="direccion">
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="edit-sintomas">Síntomas / Cuadro Clínico</label>
+                            <textarea id="edit-sintomas" name="sintomas"></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="edit-fecha">Fecha de Ingreso</label>
+                            <input type="date" id="edit-fecha" name="fecha">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edicion')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-edicion">Actualizar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: FICHA MÉDICA COMPLETA -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-ficha">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>Ficha Médica de Admisión</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-ficha')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ficha-card" id="ficha-detalle-content">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-ficha')">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Imprimir Ficha
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: CONFIRMAR ELIMINACIÓN -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-eliminar">
+        <div class="modal-box" style="max-width: 460px;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: var(--danger);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span>Confirmar Eliminación</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-eliminar')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar permanentemente al siguiente paciente?</p>
+                <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 1rem;">
+                    <div style="font-weight: 700; font-size: 1.05rem;" id="eliminar-paciente-nombre">--</div>
+                    <div style="color: var(--accent); font-family: monospace; font-size: 0.9rem;" id="eliminar-paciente-ci">--</div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
+                    Esta acción actualizará el archivo <code>dataBase.json</code> de manera definitiva.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-eliminar')">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirmar-eliminar" onclick="ejecutarEliminacion()">Eliminar Registro</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/app.js"></script>
+    <script src="/js/pacientes.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "pacienteData": [
+    {
+      "nombre": "Carlos",
+      "apellido": "Mendoza",
+      "ci": "V-28491823",
+      "direccion": "Av. Bolívar, Res. Los Samanes, Apto 4B",
+      "sintomas": "Fiebre recurrente, cefalea intensa y dolor muscular",
+      "fecha": "2026-10-15"
+    },
+    {
+      "nombre": "Elena",
+      "apellido": "Rivas",
+      "ci": "V-19827364",
+      "direccion": "Calle 5 de Julio, Casa #12, Miranda",
+      "sintomas": "Hipertensión arterial, mareos leves matutinos",
+      "fecha": "2026-10-17"
+    },
+    {
+      "nombre": "Marcos",
+      "apellido": "Silva",
+      "ci": "V-30112459",
+      "direccion": "Urb. El Rosal, Torre B, Piso 2",
+      "sintomas": "Tos seca persistente y dificultad respiratoria leve",
+      "fecha": "2026-10-18"
+    }
+  ]
+}
