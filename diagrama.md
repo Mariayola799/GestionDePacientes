@@ -1,5 +1,14 @@
 Diagrama Entidad-Relación Mermaid
 
+# Diagrama Entidad-Relación — Base de Datos `asic_miranda`
+
+> **Sistema de Gestión de Pacientes — ASIC Miranda**  
+> Motor: MySQL (InnoDB) · Charset: `utf8mb4_general_ci`
+
+---
+
+## Diagrama ER
+
 ```mermaid
 erDiagram
     USUARIOS {
@@ -32,5 +41,3 @@ erDiagram
     }
 
     PACIENTES ||--o{ CONSULTAS : "recibe / tiene historial de"
-```
-
