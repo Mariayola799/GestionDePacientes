@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Registro y control de consultas médicas por semanas epidemiológicas del ASIC Miranda. Filtros por fechas, patología y comunidad.">
+    <title>Consultas Médicas y Semanas Epidemiológicas | ASIC Miranda</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="navbar" id="main-navbar">
+        <a href="/" class="nav-brand" id="brand-link">
+            <div class="brand-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    <path d="M12 9v6M9 12h6"/>
+                </svg>
+            </div>
+            <div class="brand-title">
+                <span class="main-name">ASIC MIRANDA</span>
+                <span class="sub-name">Epidemiología y Morbilidad</span>
+            </div>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link" id="nav-inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Triaje y Panel</a></li>
+            <li><a href="/pacientes" class="nav-link" id="nav-pacientes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Pacientes</a></li>
+            <li><a href="/consultas" class="nav-link active" id="nav-consultas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Consultas Médicas</a></li>
+            <li><a href="/reportes" class="nav-link" id="nav-reportes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Reporte de Morbilidad</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <button class="btn-theme-toggle" id="btn-theme-toggle" aria-label="Cambiar tema claro/oscuro">
+                <!-- Icon injected by app.js -->
+            </button>
+            <button class="btn btn-primary" onclick="abrirModalConsulta()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Nueva Consulta</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="consultas-main">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="page-title-group">
+                <h1>Registro y Control de Consultas Médicas</h1>
+                <p>Filtrado de atenciones por semanas epidemiológicas, diagnóstico clínico y sectores comunitarios.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn btn-secondary" onclick="imprimirListadoConsultas()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Exportar / Imprimir Lista (PDF)
+                </button>
+            </div>
+        </section>
+
+        <!-- FILTROS POR FECHA Y SEMANAS EPIDEMIOLÓGICAS (Requerimiento Clave) -->
+        <section class="panel" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h3 style="font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; color: var(--accent);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Filtro por Rango de Fechas y Semanas Epidemiológicas
+                </h3>
+
+                <!-- Botones de Acceso Rápido -->
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="btn btn-sm btn-secondary" onclick="aplicarFiltroRapido('semana-actual')">Esta Semana</button>
+                    <button class="btn btn-sm btn-secondary" onclick="aplicarFiltroRapido('mes-actual')">Este Mes</button>
+                    <button class="btn btn-sm btn-secondary" onclick="aplicarFiltroRapido('todos')">Ver Todo</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.75rem;">
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Fecha Desde:</label>
+                    <input type="date" id="filtro-desde" class="select-control" style="width: 100%;" onchange="cargarConsultas()">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Fecha Hasta:</label>
+                    <input type="date" id="filtro-hasta" class="select-control" style="width: 100%;" onchange="cargarConsultas()">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Semana EP (1-53):</label>
+                    <input type="number" id="filtro-semana" min="1" max="53" placeholder="Todas" class="select-control" style="width: 100%;" oninput="cargarConsultas()">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Patología / Diagnóstico:</label>
+                    <select id="filtro-diagnostico" class="select-control" style="width: 100%;" onchange="cargarConsultas()">
+                        <option value="">Todos los Diagnósticos</option>
+                        <option value="Dengue">Dengue (Todos)</option>
+                        <option value="Infección Respiratoria">Infección Respiratoria (IRA)</option>
+                        <option value="Síndrome Diarreico">Síndrome Diarreico (SDA)</option>
+                        <option value="Hipertensión">Hipertensión Arterial</option>
+                        <option value="COVID">COVID-19</option>
+                        <option value="Asma">Asma Bronquial</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Sector Comunitario:</label>
+                    <select id="filtro-sector" class="select-control" style="width: 100%;" onchange="cargarConsultas()">
+                        <option value="">Todos los Sectores</option>
+                        <option value="Casco Central">Casco Central</option>
+                        <option value="Los Samanes">Los Samanes</option>
+                        <option value="5 de Julio">5 de Julio</option>
+                        <option value="El Rosal">El Rosal</option>
+                        <option value="Barrio Bolívar">Barrio Bolívar</option>
+                        <option value="Las Casitas">Las Casitas</option>
+                        <option value="La Lucha">La Lucha</option>
+                        <option value="San José">San José</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabla de Consultas -->
+        <section class="panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>Historial Detallado de Atenciones Médicas</span>
+                </div>
+                <span class="status-badge" id="badge-contador-consultas">Cargando...</span>
+            </div>
+
+            <div class="table-responsive" id="print-area">
+                <table class="data-table" id="tabla-consultas">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Sem. EP</th>
+                            <th>Cédula</th>
+                            <th>Paciente</th>
+                            <th>Sector / Comunidad</th>
+                            <th style="min-width: 180px;">Síntomas ("Qué siente")</th>
+                            <th style="min-width: 180px;">Diagnóstico / Patología</th>
+                            <th>Tratamiento</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-consultas">
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 3rem;">Cargando atenciones médicas...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Estado Vacío -->
+            <div class="empty-state" id="empty-state-consultas" style="display: none;">
+                <div class="empty-state-icon">🩺</div>
+                <h3>No se encontraron consultas médicas</h3>
+                <p>No existen registros que coincidan con las fechas o filtros seleccionados.</p>
+                <button class="btn btn-primary" onclick="abrirModalConsulta()">Registrar Nueva Consulta</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: REGISTRAR / EDITAR CONSULTA -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-consulta">
+        <div class="modal-box" style="max-width: 680px;">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-consulta-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                    <span>Registro de Consulta Médica</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-consulta')">&times;</button>
+            </div>
+            <form id="form-consulta" onsubmit="guardarConsulta(event)">
+                <input type="hidden" id="cons-id" name="id">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="modal-cons-ci">Cédula del Paciente *</label>
+                            <input type="text" id="modal-cons-ci" name="paciente_ci" placeholder="Ej: V-28491823" required onblur="verificarPacienteEnModal(this.value)">
+                            <span class="form-hint" id="modal-cons-ci-hint">Debe estar registrado previamente.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="modal-cons-fecha">Fecha de Consulta *</label>
+                            <input type="date" id="modal-cons-fecha" name="fecha_consulta" required onchange="calcularSemanaEp(this.value)">
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="modal-cons-semana">Semana Epidemiológica (1 - 53)</label>
+                            <input type="number" id="modal-cons-semana" name="semana_ep" min="1" max="53">
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="modal-cons-sintomas" style="color: var(--accent); font-weight: 700;">Síntomas Manifestados ("Qué siente el paciente") *</label>
+                            <textarea id="modal-cons-sintomas" name="sintomas" placeholder="Detalle síntomas, fiebre, dolores, tiempo de evolución..." required rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="modal-cons-diagnostico-select" style="color: var(--primary); font-weight: 700;">Diagnóstico / Patología Evaluada *</label>
+                            <select id="modal-cons-diagnostico-select" onchange="seleccionarDiagRapido(this.value)" class="select-control" style="width: 100%; margin-bottom: 0.5rem;">
+                                <option value="">-- Seleccionar Patología Epidemiológica Frecuente --</option>
+                                <option value="Dengue Clásico">Dengue Clásico</option>
+                                <option value="Dengue con Signos de Alarma">Dengue con Signos de Alarma</option>
+                                <option value="Infección Respiratoria Aguda (IRA)">Infección Respiratoria Aguda (IRA)</option>
+                                <option value="Síndrome Diarreico Agudo (SDA)">Síndrome Diarreico Agudo (SDA)</option>
+                                <option value="Hipertensión Arterial">Hipertensión Arterial</option>
+                                <option value="COVID-19">COVID-19</option>
+                                <option value="Asma Bronquial / Cuadro Broncoobstructivo">Asma Bronquial / Cuadro Broncoobstructivo</option>
+                                <option value="Parasitosis Intestinal">Parasitosis Intestinal</option>
+                                <option value="Escabiosis / Afección Cutánea">Escabiosis / Afección Cutánea</option>
+                                <option value="Diabetes Mellitus">Diabetes Mellitus</option>
+                                <option value="OTRO">Otro Diagnóstico</option>
+                            </select>
+                            <input type="text" id="modal-cons-diagnostico" name="diagnostico" placeholder="Diagnóstico definitivo o presuntivo..." required>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="modal-cons-tratamiento">Tratamiento Indicado y Prescripción</label>
+                            <textarea id="modal-cons-tratamiento" name="tratamiento" placeholder="Medicamentos, dosis, hidratación, reposo..." rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="modal-cons-observaciones">Observaciones / Seguimiento de Brote</label>
+                            <textarea id="modal-cons-observaciones" name="observaciones" placeholder="Anotaciones epidemiológicas..." rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-consulta')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-guardar-consulta">Guardar Consulta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/app.js"></script>
+    <script src="/js/consultas.js"></script>
+</body>
+</html>

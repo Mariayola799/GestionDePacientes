@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Reporte y Resumen Consolidado de Morbilidad y Epidemiología del ASIC Miranda. Exportación a PDF para la Dirección de Salud.">
+    <title>Reporte Consolidado de Morbilidad | ASIC Miranda</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Estilos específicos para impresión / Exportación PDF -->
+    <style>
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                font-size: 11pt;
+            }
+            .navbar, .no-print, .toolbar-controls, .btn, .btn-theme-toggle {
+                display: none !important;
+            }
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .panel {
+                border: 1px solid #ccc !important;
+                background: #ffffff !important;
+                box-shadow: none !important;
+                margin-bottom: 1.5rem !important;
+            }
+            .data-table th {
+                background: #f1f5f9 !important;
+                color: #000000 !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            .data-table td {
+                border: 1px solid #e2e8f0 !important;
+                color: #000000 !important;
+            }
+            .hoja-oficial-header {
+                display: block !important;
+                text-align: center;
+                border-bottom: 2px solid #0f172a;
+                padding-bottom: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            .firma-box {
+                display: flex !important;
+                justify-content: space-around;
+                margin-top: 3rem;
+                page-break-inside: avoid;
+            }
+        }
+        .hoja-oficial-header {
+            display: none;
+        }
+        .firma-box {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="navbar" id="main-navbar">
+        <a href="/" class="nav-brand" id="brand-link">
+            <div class="brand-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    <path d="M12 9v6M9 12h6"/>
+                </svg>
+            </div>
+            <div class="brand-title">
+                <span class="main-name">ASIC MIRANDA</span>
+                <span class="sub-name">Epidemiología y Morbilidad</span>
+            </div>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link" id="nav-inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Triaje y Panel</a></li>
+            <li><a href="/pacientes" class="nav-link" id="nav-pacientes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Pacientes</a></li>
+            <li><a href="/consultas" class="nav-link" id="nav-consultas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Consultas Médicas</a></li>
+            <li><a href="/reportes" class="nav-link active" id="nav-reportes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Reporte de Morbilidad</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <button class="btn-theme-toggle" id="btn-theme-toggle" aria-label="Cambiar tema claro/oscuro">
+                <!-- Icon injected by app.js -->
+            </button>
+            <button class="btn btn-primary" onclick="exportarReportePDF()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>Descargar en PDF</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="reportes-main">
+
+        <!-- Membrete Oficial para Impresión / Exportación a PDF -->
+        <div class="hoja-oficial-header">
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #475569;">República Bolivariana de Venezuela · Ministerio del Poder Popular para la Salud</h4>
+            <h2 style="font-size: 1.3rem; margin: 0.25rem 0; color: #0f172a;">ÁREA DE SALUD INTEGRAL COMUNITARIA (ASIC) MIRANDA</h2>
+            <h3 style="font-size: 1.05rem; font-weight: 600; color: #0284c7;">INFORME CONSOLIDADO DE MORBILIDAD Y EPIDEMIOLOGÍA SEMANAL / MENSUAL</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;" id="print-fecha-emision">Fecha de Emisión: --</p>
+        </div>
+
+        <!-- Encabezado de Pantalla -->
+        <section class="page-header no-print">
+            <div class="page-title-group">
+                <h1>Resumen Consolidado de Morbilidad</h1>
+                <p>Consolidado epidemiológico para sustitución de hojas manuales del Ministerio de Salud. Conteo por patología y georreferenciación de brotes.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" onclick="exportarReportePDF()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Imprimir / Guardar en PDF
+                </button>
+            </div>
+        </section>
+
+        <!-- Filtros del Reporte (no-print) -->
+        <section class="panel no-print" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h3 style="font-size: 1rem; color: var(--accent);">Período Epidemiológico del Reporte</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-sm btn-secondary" onclick="seleccionarPeriodoReporte('mes-actual')">Este Mes</button>
+                    <button class="btn btn-sm btn-secondary" onclick="seleccionarPeriodoReporte('semana-actual')">Esta Semana</button>
+                    <button class="btn btn-sm btn-secondary" onclick="seleccionarPeriodoReporte('todos')">Histórico Completo</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Fecha Desde:</label>
+                    <input type="date" id="rep-desde" class="select-control" style="width: 100%;" onchange="cargarReporteMorbilidad()">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Fecha Hasta:</label>
+                    <input type="date" id="rep-hasta" class="select-control" style="width: 100%;" onchange="cargarReporteMorbilidad()">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Semana Epidemiológica (1-53):</label>
+                    <input type="number" id="rep-semana" min="1" max="53" placeholder="Todas las semanas" class="select-control" style="width: 100%;" oninput="cargarReporteMorbilidad()">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Sector / Comunidad:</label>
+                    <select id="rep-sector" class="select-control" style="width: 100%;" onchange="cargarReporteMorbilidad()">
+                        <option value="">Todos los Sectores</option>
+                        <option value="Casco Central">Casco Central</option>
+                        <option value="Los Samanes">Los Samanes</option>
+                        <option value="5 de Julio">5 de Julio</option>
+                        <option value="El Rosal">El Rosal</option>
+                        <option value="Barrio Bolívar">Barrio Bolívar</option>
+                        <option value="Las Casitas">Las Casitas</option>
+                        <option value="La Lucha">La Lucha</option>
+                        <option value="San José">San José</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Métricas Rápidas del Reporte -->
+        <section class="metrics-grid" style="margin-bottom: 1.5rem;">
+            <div class="metric-card">
+                <div class="metric-icon" style="color: var(--primary);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="metric-info">
+                    <h3>Total Casos Atendidos</h3>
+                    <div class="metric-value" id="rep-total-casos">--</div>
+                    <div class="metric-sub" id="rep-periodo-sub">En el período consultado</div>
+                </div>
+            </div>
+
+            <div class="metric-card accent-cyan">
+                <div class="metric-icon" style="color: var(--accent);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="metric-info">
+                    <h3>Patologías Distintas</h3>
+                    <div class="metric-value" id="rep-total-patologias">--</div>
+                    <div class="metric-sub">Diagnósticos reportados</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" style="color: var(--warning);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div class="metric-info">
+                    <h3>Foco Comunitario Principal</h3>
+                    <div class="metric-value" id="rep-foco-principal" style="font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">--</div>
+                    <div class="metric-sub" id="rep-foco-sub">Mayor incidencia registrada</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLA 1: CONSOLIDADO DE MORBILIDAD (HOJA DEL MINISTERIO) -->
+        <section class="panel" style="margin-bottom: 2rem;">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>Tabla Consolidada de Morbilidad por Diagnóstico</span>
+                </div>
+                <span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--success); border-color: var(--success);">
+                    Resumen Epidemiológico
+                </span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table" id="tabla-morbilidad">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">N°</th>
+                            <th>Diagnóstico / Patología Evaluada</th>
+                            <th style="text-align: center;">Casos Registrados</th>
+                            <th style="text-align: center;">% Incidencia</th>
+                            <th>Comunidades / Sectores Afectados</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-morbilidad">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2.5rem;">Cargando consolidado de morbilidad...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TABLA 2: DISTRIBUCIÓN POR COMUNIDADES / SECTORES (CONTROL DE BROTES) -->
+        <section class="panel" style="margin-bottom: 2rem;">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Incidencia Geográfica por Sectores / Consejos Comunales (Detección de Brotes)</span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table" id="tabla-sectores">
+                    <thead>
+                        <tr>
+                            <th>Sector / Comunidad</th>
+                            <th style="text-align: center;">Total Casos</th>
+                            <th style="text-align: center;">% Distribución</th>
+                            <th>Nivel de Alerta Comunitaria</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-sectores">
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 2rem;">Cargando distribución comunitaria...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección de Firmas para la entrega física / Dirección de Salud (Print Mode) -->
+        <div class="firma-box">
+            <div style="text-align: center; width: 220px; border-top: 1px solid #000; padding-top: 0.5rem;">
+                <p style="font-weight: 700; font-size: 0.9rem;">Dr(a). Responsable</p>
+                <p style="font-size: 0.8rem; color: #475569;">Área de Morbilidad y Epidemiología</p>
+                <p style="font-size: 0.8rem; color: #475569;">ASIC Miranda</p>
+            </div>
+            <div style="text-align: center; width: 220px; border-top: 1px solid #000; padding-top: 0.5rem;">
+                <p style="font-weight: 700; font-size: 0.9rem;">Dirección de Salud</p>
+                <p style="font-size: 0.8rem; color: #475569;">Sello y Conforme</p>
+                <p style="font-size: 0.8rem; color: #475569;">Ministerio del Poder Popular para la Salud</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/app.js"></script>
+    <script src="/js/reportes.js"></script>
+</body>
+</html>

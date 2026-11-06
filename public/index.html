@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema web de gestión y control de pacientes del ASIC Miranda. Registro, búsqueda, modificación y ficha clínica de pacientes.">
-    <meta name="keywords" content="ASIC Miranda, pacientes, gestión hospitalaria, medicina, expedientes médicos">
-    <title>ASIC Miranda | Sistema de Gestión de Pacientes</title>
+    <meta name="description" content="Sistema Web de Registro y Control Epidemiológico de Pacientes - ASIC Miranda. Triaje rápido, morbilidad, semanas epidemiológicas y consultas.">
+    <title>ASIC Miranda | Panel de Control y Triaje Rápido</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,23 +27,25 @@
             </div>
             <div class="brand-title">
                 <span class="main-name">ASIC MIRANDA</span>
-                <span class="sub-name">Control de Pacientes</span>
+                <span class="sub-name">Epidemiología y Morbilidad</span>
             </div>
         </a>
 
         <ul class="nav-menu">
-            <li><a href="/" class="nav-link active" id="nav-inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Inicio</a></li>
-            <li><a href="/pacientes" class="nav-link" id="nav-pacientes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Gestión de Pacientes</a></li>
+            <li><a href="/" class="nav-link active" id="nav-inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Triaje y Panel</a></li>
+            <li><a href="/pacientes" class="nav-link" id="nav-pacientes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Pacientes</a></li>
+            <li><a href="/consultas" class="nav-link" id="nav-consultas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Consultas Médicas</a></li>
+            <li><a href="/reportes" class="nav-link" id="nav-reportes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Reporte de Morbilidad</a></li>
         </ul>
 
         <div class="nav-actions">
             <button class="btn-theme-toggle" id="btn-theme-toggle" aria-label="Cambiar tema claro/oscuro">
                 <!-- Icon injected by app.js -->
             </button>
-            <a href="/pacientes?action=new" class="btn btn-primary" id="btn-nav-registrar">
+            <button class="btn btn-primary" onclick="abrirModalNuevaConsulta()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span>Nuevo Paciente</span>
-            </a>
+                <span>Nueva Consulta</span>
+            </button>
             <button class="btn btn-secondary btn-sm" id="btn-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 <span>Salir</span>
@@ -54,11 +55,40 @@
 
     <!-- Main Content -->
     <main class="main-content" id="dashboard-main">
-        <!-- Page Header -->
-        <section class="page-header">
-            <div class="page-title-group">
-                <h1>Panel de Control Clínico</h1>
-                <p>Plataforma para el registro, consulta y administración integral de expedientes médicos ambulatorios y hospitalarios.</p>
+
+        <!-- Triaje Rápido por Cédula (SECCIÓN DESTACADA) -->
+        <section class="panel" style="border: 2px solid var(--accent); background: linear-gradient(145deg, rgba(6, 182, 212, 0.05) 0%, var(--bg-surface) 100%); margin-bottom: 2rem;">
+            <div class="panel-header" style="border-bottom: 1px solid var(--border-subtle);">
+                <div class="panel-title" style="color: var(--accent); font-size: 1.25rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Triaje Rápido por Cédula (Búsqueda Inmediata)</span>
+                </div>
+                <span class="status-badge" style="background: rgba(6, 182, 212, 0.15); color: var(--accent); border-color: var(--accent);">Atención Inmediata</span>
+            </div>
+
+            <div style="padding: 1.5rem;">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                    Al ingresar el paciente, escriba su número de cédula para consultar al instante sus datos de residencia (sector) y <strong>todo su historial de visitas médicas anteriores en orden cronológico</strong>:
+                </p>
+
+                <form id="form-triaje-rapido" onsubmit="ejecutarTriajeRapido(event)" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 260px; position: relative;">
+                        <input type="text" id="input-triaje-ci" placeholder="Ej: V-28491823 o 28491823..." required
+                               style="width: 100%; padding: 0.85rem 1.2rem; font-size: 1.1rem; border-radius: var(--radius-md); border: 1px solid var(--border-hover); background: var(--bg-surface-elevated); color: var(--text-primary); font-family: monospace; font-weight: 600;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="padding: 0 1.75rem; font-size: 1rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Consultar Historial
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="limpiarTriaje()">
+                        Limpiar
+                    </button>
+                </form>
+
+                <!-- Contenedor del Resultado del Triaje (Ficha + Historial de Visitas) -->
+                <div id="resultado-triaje" style="display: none; margin-top: 1.5rem;">
+                    <!-- Se inyecta dinámicamente con JavaScript -->
+                </div>
             </div>
         </section>
 
@@ -71,47 +101,74 @@
                 <div class="metric-info">
                     <h3>Total Pacientes</h3>
                     <div class="metric-value" id="val-total-pacientes">--</div>
-                    <div class="metric-sub">Expedientes activos registrados</div>
+                    <div class="metric-sub">Ciudadanos empadronados</div>
                 </div>
             </div>
 
-            <div class="metric-card accent-cyan" id="card-ingresos-hoy">
+            <div class="metric-card accent-cyan" id="card-total-consultas">
                 <div class="metric-icon" style="color: var(--accent);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <div class="metric-info">
+                    <h3>Consultas Médicas</h3>
+                    <div class="metric-value" id="val-total-consultas">--</div>
+                    <div class="metric-sub">Historial acumulado</div>
+                </div>
+            </div>
+
+            <div class="metric-card" id="card-ingresos-hoy">
+                <div class="metric-icon" style="color: var(--success);">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 </div>
                 <div class="metric-info">
-                    <h3>Ingresos de Hoy</h3>
+                    <h3>Atenciones de Hoy</h3>
                     <div class="metric-value" id="val-ingresos-hoy">--</div>
-                    <div class="metric-sub">Admitidos en la fecha actual</div>
+                    <div class="metric-sub">Consultas en la fecha actual</div>
+                </div>
+            </div>
+
+            <div class="metric-card" id="card-top-diagnostico">
+                <div class="metric-icon" style="color: var(--warning);">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div class="metric-info">
+                    <h3>Diagnóstico Prevalente</h3>
+                    <div class="metric-value" id="val-top-diagnostico" style="font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">--</div>
+                    <div class="metric-sub" id="val-top-diagnostico-sub">Monitoreo epidemiológico</div>
                 </div>
             </div>
         </section>
 
-        <!-- Recent Admissions Panel -->
+        <!-- Últimas Consultas Médicas -->
         <section class="panel" id="recent-admissions-panel">
             <div class="panel-header">
                 <div class="panel-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                    <span>Últimos Pacientes Registrados</span>
+                    <span>Últimas Consultas y Atenciones Médicas</span>
                 </div>
-                <a href="/pacientes" class="btn btn-sm btn-secondary" id="btn-ver-todos">Ver todos los pacientes &rarr;</a>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="/consultas" class="btn btn-sm btn-primary">Ver Todas las Consultas &rarr;</a>
+                    <a href="/reportes" class="btn btn-sm btn-secondary">Reporte de Morbilidad &rarr;</a>
+                </div>
             </div>
 
             <div class="table-responsive">
                 <table class="data-table" id="tabla-recientes">
                     <thead>
                         <tr>
+                            <th>Fecha</th>
+                            <th>Sem. EP</th>
                             <th>Cédula</th>
                             <th>Paciente</th>
-                            <th>Síntomas</th>
-                            <th>Dirección</th>
-                            <th>Fecha</th>
+                            <th>Sector / Comunidad</th>
+                            <th>Síntomas Clínicos</th>
+                            <th>Diagnóstico / Patología</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-recientes">
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 2rem;">Cargando registros...</td>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">Cargando registros epidemiológicos...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -119,28 +176,142 @@
         </section>
     </main>
 
-    <!-- Modal Ficha / Detalle Rápido -->
-    <div class="modal-backdrop" id="modal-ficha-rapida">
+    <!-- ============================================================== -->
+    <!-- MODAL: REGISTRAR NUEVA CONSULTA MÉDICA -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-nueva-consulta">
+        <div class="modal-box" style="max-width: 680px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                    <span>Registrar Consulta Médica (Visita de Paciente)</span>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-nueva-consulta')">&times;</button>
+            </div>
+            <form id="form-nueva-consulta" onsubmit="guardarConsultaDesdeModal(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cons-ci">Cédula del Paciente *</label>
+                            <input type="text" id="cons-ci" name="paciente_ci" placeholder="Ej: V-28491823" required onblur="verificarPacienteParaConsulta(this.value)">
+                            <span class="form-hint" id="cons-ci-status">El paciente debe existir en el directorio.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cons-fecha">Fecha de Consulta *</label>
+                            <input type="date" id="cons-fecha" name="fecha_consulta" required onchange="actualizarSemanaEpAuto(this.value)">
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="cons-semana">Semana Epidemiológica (Automática 1 - 53)</label>
+                            <input type="number" id="cons-semana" name="semana_ep" min="1" max="53" placeholder="Semana epidemiológica ministerial">
+                            <span class="form-hint">Se calcula automáticamente según la fecha para las hojas de morbilidad.</span>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="cons-sintomas" style="color: var(--accent); font-weight: 700;">Síntomas Manifestados ("Qué siente el paciente") *</label>
+                            <textarea id="cons-sintomas" name="sintomas" placeholder="Detalle los síntomas, tiempo de evolución, fiebre, dolores, malestar..." required rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="cons-diagnostico-select" style="color: var(--primary); font-weight: 700;">Diagnóstico / Patología Evaluada *</label>
+                            <select id="cons-diagnostico-select" onchange="seleccionarDiagnosticoSugerido(this.value)" class="select-control" style="width: 100%; margin-bottom: 0.5rem;">
+                                <option value="">-- Seleccionar Patología Epidemiológica Frecuente --</option>
+                                <option value="Dengue Clásico">Dengue Clásico</option>
+                                <option value="Dengue con Signos de Alarma">Dengue con Signos de Alarma</option>
+                                <option value="Infección Respiratoria Aguda (IRA)">Infección Respiratoria Aguda (IRA)</option>
+                                <option value="Síndrome Diarreico Agudo (SDA)">Síndrome Diarreico Agudo (SDA)</option>
+                                <option value="Hipertensión Arterial">Hipertensión Arterial</option>
+                                <option value="COVID-19">COVID-19</option>
+                                <option value="Asma Bronquial / Cuadro Broncoobstructivo">Asma Bronquial / Cuadro Broncoobstructivo</option>
+                                <option value="Parasitosis Intestinal">Parasitosis Intestinal</option>
+                                <option value="Escabiosis / Afección Cutánea">Escabiosis / Afección Cutánea</option>
+                                <option value="Diabetes Mellitus">Diabetes Mellitus</option>
+                                <option value="OTRO">Otro Diagnóstico (Escribir abajo)</option>
+                            </select>
+                            <input type="text" id="cons-diagnostico" name="diagnostico" placeholder="Escriba o confirme el diagnóstico clínico exacto..." required>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="cons-tratamiento">Tratamiento Indicado y Prescripción</label>
+                            <textarea id="cons-tratamiento" name="tratamiento" placeholder="Medicamentos, dosis, hidratación oral, reposo, medidas preventivas..." rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="cons-observaciones">Observaciones Epidemiológicas / Remisión</label>
+                            <textarea id="cons-observaciones" name="observaciones" placeholder="Seguimiento epidemiológico, posible foco ambiental, remisión a especialista..." rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-nueva-consulta')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-consulta">Guardar Consulta en Historial</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: REGISTRAR PACIENTE RÁPIDO (DESDE EL PANEL) -->
+    <!-- ============================================================== -->
+    <div class="modal-backdrop" id="modal-registro-rapido">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    <span>Ficha Médica del Paciente</span>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                    <span>Registrar Nuevo Paciente</span>
                 </div>
-                <button class="modal-close-btn" onclick="closeModal('modal-ficha-rapida')">&times;</button>
+                <button class="modal-close-btn" onclick="closeModal('modal-registro-rapido')">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="ficha-card" id="ficha-rapida-content">
-                    <!-- Dynamic Ficha Content -->
+            <form id="form-registro-rapido" onsubmit="guardarPacienteRapido(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="rapido-ci">Cédula de Identidad *</label>
+                            <input type="text" id="rapido-ci" name="ci" placeholder="Ej: V-28491823" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rapido-nombre">Nombre *</label>
+                            <input type="text" id="rapido-nombre" name="nombre" placeholder="Ej: Carlos" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rapido-apellido">Apellido *</label>
+                            <input type="text" id="rapido-apellido" name="apellido" placeholder="Ej: Mendoza" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rapido-telefono">Teléfono</label>
+                            <input type="text" id="rapido-telefono" name="telefono" placeholder="Ej: 0414-1234567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rapido-sector">Sector / Comunidad de Residencia *</label>
+                            <select id="rapido-sector" name="sector" class="select-control" style="width: 100%;" required>
+                                <option value="Casco Central">Casco Central</option>
+                                <option value="Los Samanes">Los Samanes</option>
+                                <option value="5 de Julio">5 de Julio</option>
+                                <option value="El Rosal">El Rosal</option>
+                                <option value="Barrio Bolívar">Barrio Bolívar</option>
+                                <option value="Las Casitas">Las Casitas</option>
+                                <option value="La Lucha">La Lucha</option>
+                                <option value="San José">San José</option>
+                                <option value="Otro Sector">Otro Sector</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="rapido-direccion">Dirección Detallada</label>
+                            <input type="text" id="rapido-direccion" name="direccion" placeholder="Calle, casa, número de apartamento">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-ficha-rapida')">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="window.print()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                    Imprimir Ficha
-                </button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-registro-rapido')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Registrar y Abrir Consulta</button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -1,7 +1,8 @@
 const tablaModel = require("tabla-model");
 
 /*
- * Modelo de Pacientes para MySQL
+ * Modelo de Pacientes para MySQL (3FN)
+ * Contiene datos demográficos y georreferenciales (Sector/Comunidad)
  */
 const pacientes = new tablaModel("pacientes", {
     colums: [
@@ -22,25 +23,30 @@ const pacientes = new tablaModel("pacientes", {
             defaultNull: false
         },
         {
+            name: "telefono",
+            type: "varchar(45)",
+            defaultNull: true
+        },
+        {
+            name: "sector",
+            type: "varchar(100)",
+            defaultNull: false
+        },
+        {
             name: "direccion",
             type: "varchar(255)",
             defaultNull: true
         },
         {
-            name: "sintomas",
-            type: "text",
-            defaultNull: true
-        },
-        {
-            name: "fecha",
+            name: "fecha_registro",
             type: "varchar(45)",
-            defaultNull: true
+            defaultNull: false
         }
     ]
 });
 
 /**
- * Inicializa pacientes en MySQL si la tabla está vacía, migrando desde dataBase.json o semillas
+ * Inicializa pacientes de prueba en MySQL si la tabla está vacía
  * @param {object} db - Conexión de mysql-tab
  */
 async function inicializarPacientes(db) {
@@ -49,57 +55,56 @@ async function inicializarPacientes(db) {
         const lista = await tabla.select();
         
         if (!lista || lista.length === 0) {
-            const fs = require('fs');
-            const path = require('path');
-            const jsonPath = path.join(__dirname, '../dataBase.json');
-            
-            let seedData = [
+            const seedData = [
                 {
+                    ci: "V-28491823",
                     nombre: "Carlos",
                     apellido: "Mendoza",
-                    ci: "V-28491823",
+                    telefono: "0414-1234567",
+                    sector: "Los Samanes",
                     direccion: "Av. Bolívar, Res. Los Samanes, Apto 4B",
-                    sintomas: "Fiebre recurrente, cefalea intensa y dolor muscular",
-                    fecha: "2026-10-15"
+                    fecha_registro: "2026-10-15"
                 },
                 {
+                    ci: "V-19827364",
                     nombre: "Elena",
                     apellido: "Rivas",
-                    ci: "V-19827364",
+                    telefono: "0412-9876543",
+                    sector: "5 de Julio",
                     direccion: "Calle 5 de Julio, Casa #12, Miranda",
-                    sintomas: "Hipertensión arterial, mareos leves matutinos",
-                    fecha: "2026-10-17"
+                    fecha_registro: "2026-10-17"
                 },
                 {
+                    ci: "V-30112459",
                     nombre: "Marcos",
                     apellido: "Silva",
-                    ci: "V-30112459",
+                    telefono: "0416-5551234",
+                    sector: "El Rosal",
                     direccion: "Urb. El Rosal, Torre B, Piso 2",
-                    sintomas: "Tos seca persistente y dificultad respiratoria leve",
-                    fecha: "2026-10-18"
+                    fecha_registro: "2026-10-18"
+                },
+                {
+                    ci: "V-22194837",
+                    nombre: "Rosa",
+                    apellido: "Guerrero",
+                    telefono: "0424-3338899",
+                    sector: "Barrio Bolívar",
+                    direccion: "Sector 2, Calle San Juan, Casa 45",
+                    fecha_registro: "2026-10-25"
+                },
+                {
+                    ci: "V-17554321",
+                    nombre: "José",
+                    apellido: "Pérez",
+                    telefono: "0414-7774411",
+                    sector: "Casco Central",
+                    direccion: "Calle Comercio, Edif. Miranda, Piso 1",
+                    fecha_registro: "2026-10-28"
                 }
             ];
 
-            if (fs.existsSync(jsonPath)) {
-                try {
-                    const raw = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-                    if (Array.isArray(raw.pacienteData) && raw.pacienteData.length > 0) {
-                        seedData = raw.pacienteData;
-                    }
-                } catch (e) {
-                    console.warn("No se pudo leer dataBase.json para inicialización, usando datos predeterminados.");
-                }
-            }
-
             for (const p of seedData) {
-                await tabla.insert({
-                    ci: p.ci,
-                    nombre: p.nombre,
-                    apellido: p.apellido,
-                    direccion: p.direccion || '',
-                    sintomas: p.sintomas || '',
-                    fecha: p.fecha || new Date().toISOString().slice(0, 10)
-                });
+                await tabla.insert(p);
             }
             console.log(`>> [MySQL] ${seedData.length} pacientes iniciales cargados en la base de datos.`);
         }

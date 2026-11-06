@@ -1,48 +1,65 @@
-# Sistema de Control y Gestión de Pacientes 😷
+# Sistema Web de Control y Gestión Epidemiológica de Pacientes 🏥
+### ASIC Miranda — Área de Epidemiología y Morbilidad
 
-Proyecto desarrollado para el **ASIC Miranda**, con servidor backend en Node.js, Express y persistencia relacional en **MySQL** mediante la librería **`mysql-tab`** (idéntico a la arquitectura del proyecto `GestionNotasLiceo`).
+Desarrollado con **Node.js**, **Express**, arquitectura modular en **`routes/`**, modelos con **`tabla-model`** y persistencia relacional normalizada (**1FN, 2FN y 3FN**) en **MariaDB / MySQL** del sistema mediante **`mysql-tab`**.
 
 ---
 
-## Integrantes
+## 👩‍💻 Integrante
+- **Maria Rodriguez**
 
-- Maria Rodriguez
+---
 
-## 🚀 Novedades: Integración con MySQL (`mysql-tab`)
+## 🚀 Arquitectura y Novedades del Prototipo PSIT
 
-El proyecto cuenta con integración completa a MySQL:
-- **Base de datos propia**: `asic_miranda` (configurable vía `.env`).
-- **Tabla `usuarios`**: Almacena usuarios y hashes de contraseñas con `bcryptjs`. Inicializa automáticamente al usuario `admin` con contraseña `admin` si no existe.
-- **Tabla `pacientes`**: Almacena los registros médicos de los pacientes (`ci`, `nombre`, `apellido`, `direccion`, `sintomas`, `fecha`) con `ci` como clave primaria.
-- **Modelos declarativos (`tabla-model`)**: Definidos en la carpeta `model/` (`usuarios.js` y `pacientes.js`).
-- **Conector (`routes/db.js`)**: Gestiona la conexión con `mysql-tab`, registra los modelos (`pathModels`) e inyecta la conexión en `req.db`.
-- **Script SQL (`bd.sql`)**: Incluye la creación de la base de datos, tablas y datos iniciales.
+1. **Base de Datos Normalizada (1FN, 2FN, 3FN)**:
+   - **`usuarios`**: Autenticación con contraseñas cifradas vía `bcryptjs` y sesiones JWT de 24 horas.
+   - **`pacientes`**: Ficha demográfica con Cédula de Identidad (`ci` como clave primaria), nombre, apellido, teléfono, **sector/comunidad** y dirección.
+   - **`consultas`**: Historial clínico con relación $1:N$ vinculada a `pacientes.ci`. Resuelve el error de clave duplicada y preserva todas las visitas sucesivas en orden cronológico.
+   - **Diferenciación de Síntomas vs Diagnóstico**: Registro separado de síntomas subjetivos ("qué siente") respecto a la patología evaluada (Dengue, IRA, SDA, Hipertensión, etc.).
+   - **Semanas Epidemiológicas (1-53)**: Cálculo automático y filtro por rangos de fechas para hojas oficiales de morbilidad.
+   - **Georreferenciación Comunitaria (Sectores)**: Identificación de focos y brotes por sectores (Los Samanes, 5 de Julio, El Rosal, Barrio Bolívar, etc.).
+
+2. **Triaje Rápido por Cédula**:
+   - Búsqueda inmediata al ingresar la cédula del paciente, mostrando al instante sus antecedentes y todo su historial de visitas en orden cronológico.
+
+3. **Consolidado de Morbilidad y Exportación a PDF**:
+   - Vista que reproduce las hojas de morbilidad del Ministerio de Salud (conteo por patología, % de incidencia y sectores afectados).
+   - Botón de exportación e impresión directa en PDF con membrete oficial del ASIC Miranda.
+
+4. **Código Limpio y Modular (`routes/`)**:
+   - Endpoints desacoplados de `server.js` en enrutadores independientes:
+     - `routes/auth.js`: Autenticación y middlewares de seguridad.
+     - `routes/pacientes.js`: CRUD y triaje por cédula.
+     - `routes/consultas.js`: Atenciones médicas y filtros epidemiológicos.
+     - `routes/reportes.js`: Estadísticas y consolidado de morbilidad.
+     - `routes/views.js`: Renderizado de vistas HTML protegidas.
 
 ---
 
 ## 📋 Requisitos Previos
 
 1. [Node.js](https://nodejs.org/) (versión 18 o superior).
-2. Servidor MySQL en ejecución (ej. XAMPP, WampServer o servicio MySQL independiente en el puerto 3306).
+2. Servidor MariaDB / MySQL en ejecución en el sistema (puerto 3306).
 
 ---
 
 ## ⚙️ Configuración (.env)
 
-Crea o edita el archivo `.env` en la raíz del proyecto (puedes guiarte de [.env.example](file:///c:/js/Qlq/.env.example)):
+Copia o edita el archivo `.env` en la raíz del proyecto:
 
 ```env
 # Puerto del servidor web
 PORT=3000
 
-# Clave secreta para la firma de tokens JWT (vigencia de 24 horas)
+# Clave secreta para firma de tokens JWT (vigencia de 24 horas)
 JWT_SECRET=asic-miranda-secret-key-24h-auth-2026
 
-# Credenciales por defecto del usuario administrador
+# Credenciales por defecto del administrador
 ADMIN_USER=admin
 ADMIN_PASS=admin
 
-# Configuración de la base de datos MySQL
+# Configuración de base de datos MariaDB / MySQL
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
@@ -52,52 +69,30 @@ DB_NAME=asic_miranda
 
 ---
 
-## 🗄️ Base de Datos MySQL
+## 🗄️ Puesta en Marcha de la Base de Datos
 
-### Opción A (Automática con `mysql-tab`):
-Al iniciar el servidor (`npm start`), la librería `mysql-tab` crea automáticamente la base de datos y las tablas a partir de los modelos si no existen, sincronizando el usuario `admin` y los datos de pacientes.
-
-### Opción B (Manual vía SQL):
-Puedes importar el script [bd.sql](file:///c:/js/Qlq/bd.sql) en phpMyAdmin, MySQL Workbench o tu cliente preferido:
-
+Importa el script normalizado en el servicio MariaDB del sistema:
 ```bash
-mysql -u root -p < bd.sql
+mysql -u root -padmin asic_miranda < bd.sql
 ```
 
 ---
 
-## 📦 Instalación
+## 📦 Instalación y Ejecución
 
-1. Abre una terminal en la carpeta del proyecto.
-2. Instala las dependencias necesarias:
-
+1. Instala las dependencias del proyecto:
 ```bash
 npm install
 ```
 
----
-
-## 🖥️ Uso
-
-### Iniciar la Aplicación Web
-
+2. Inicia el servidor web:
 ```bash
 npm start
 ```
-O directamente:
-```bash
-node server.js
-```
 
-Abre tu navegador web en:
-- **Inicio de Sesión**: [http://localhost:3000/login](http://localhost:3000/login) (Credenciales: `admin` / `admin`)
-- **Dashboard Principal**: [http://localhost:3000](http://localhost:3000)
-- **Gestión de Pacientes**: [http://localhost:3000/pacientes](http://localhost:3000/pacientes)
-
-### Modo Consola (Terminal)
-
-Para ejecutar la versión de línea de comandos:
-
-```bash
-npm run cli
-```
+3. Accede desde tu navegador web:
+   - **Triaje y Panel Principal**: [http://localhost:3000](http://localhost:3000)
+   - **Directorio de Pacientes**: [http://localhost:3000/pacientes](http://localhost:3000/pacientes)
+   - **Consultas Médicas (Semanas EP)**: [http://localhost:3000/consultas](http://localhost:3000/consultas)
+   - **Reporte de Morbilidad y Exportación PDF**: [http://localhost:3000/reportes](http://localhost:3000/reportes)
+   - **Inicio de Sesión**: [http://localhost:3000/login](http://localhost:3000/login) (*Credenciales default:* `admin` / `admin`)
